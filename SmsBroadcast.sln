@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Infrastructure", "SmsBroadcast.Infrastructure\SmsBroadcast.Infrastructure.csproj", "{C8D7F7FB-07E0-404E-8904-66A60B43E270}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmsBroadcast.Api", "SmsBroadcast.Api\SmsBroadcast.Api.csproj", "{F07FE81C-C769-4148-8CAA-8996F7A8C31E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Services", "SmsBroadcast.Services\SmsBroadcast.Services.csproj", "{35DE5A3D-8BA8-45E2-9A01-6C9D9A9F7848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmsBroadcast.Web", "SmsBroadcast.Web\SmsBroadcast.Web.csproj", "{CAEBFD0E-14E8-4DE2-9131-BA3082314AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Api", "SmsBroadcast.Api\SmsBroadcast.Api.csproj", "{F07FE81C-C769-4148-8CAA-8996F7A8C31E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Web", "SmsBroadcast.Web\SmsBroadcast.Web.csproj", "{CAEBFD0E-14E8-4DE2-9131-BA3082314AA7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.UnitTests", "SmsBroadcast.UnitTests\SmsBroadcast.UnitTests.csproj", "{A127D76B-1A1D-4B89-8FA6-1CA00192FC73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmsBroadcast.UnitTests", "SmsBroadcast.UnitTests\SmsBroadcast.UnitTests.csproj", "{A127D76B-1A1D-4B89-8FA6-1CA00192FC73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Android", "SmsBroadcast.Android\SmsBroadcast.Android.csproj", "{4D50CD7B-A356-400A-AAF2-18CC3E2514DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Infrastructure", "SmsBroadcast.Infrastructure\SmsBroadcast.Infrastructure.csproj", "{587143CF-9C08-4931-BC03-CECB878DF566}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsBroadcast.Services", "SmsBroadcast.Services\SmsBroadcast.Services.csproj", "{06591D28-A75F-4873-9376-F34067F016B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C8D7F7FB-07E0-404E-8904-66A60B43E270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8D7F7FB-07E0-404E-8904-66A60B43E270}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8D7F7FB-07E0-404E-8904-66A60B43E270}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8D7F7FB-07E0-404E-8904-66A60B43E270}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35DE5A3D-8BA8-45E2-9A01-6C9D9A9F7848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35DE5A3D-8BA8-45E2-9A01-6C9D9A9F7848}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35DE5A3D-8BA8-45E2-9A01-6C9D9A9F7848}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35DE5A3D-8BA8-45E2-9A01-6C9D9A9F7848}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F07FE81C-C769-4148-8CAA-8996F7A8C31E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F07FE81C-C769-4148-8CAA-8996F7A8C31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F07FE81C-C769-4148-8CAA-8996F7A8C31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +39,14 @@ Global
 		{4D50CD7B-A356-400A-AAF2-18CC3E2514DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D50CD7B-A356-400A-AAF2-18CC3E2514DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D50CD7B-A356-400A-AAF2-18CC3E2514DF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{587143CF-9C08-4931-BC03-CECB878DF566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{587143CF-9C08-4931-BC03-CECB878DF566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{587143CF-9C08-4931-BC03-CECB878DF566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{587143CF-9C08-4931-BC03-CECB878DF566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06591D28-A75F-4873-9376-F34067F016B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06591D28-A75F-4873-9376-F34067F016B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06591D28-A75F-4873-9376-F34067F016B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06591D28-A75F-4873-9376-F34067F016B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
