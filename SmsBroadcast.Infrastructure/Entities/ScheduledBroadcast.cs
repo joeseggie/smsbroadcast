@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmsBroadcast.Infrastructure.Entities
 {
+    [Table("ScheduledBroadcast")]
     public class ScheduledBroadcast
     {
         [Key]

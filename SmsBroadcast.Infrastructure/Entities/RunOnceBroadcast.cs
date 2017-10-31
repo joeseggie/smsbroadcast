@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmsBroadcast.Infrastructure.Entities
 {
+    [Table("RunOnceBroadcast")]
     public class RunOnceBroadcast
     {
         [Key]
