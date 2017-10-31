@@ -7,8 +7,7 @@ namespace SmsBroadcast.Infrastructure.Data
     {
         public SmsBroadcastContext(DbContextOptions<SmsBroadcastContext> options):base(options){}
 
-        public virtual DbSet<ScheduledBroadcast> ScScheduledBroadcasts { get; set; }
-        public virtual DbSet<RunOnceBroadcast> RunOnceBroadcasts { get; set; }        
+        public virtual DbSet<Schedule> Schedules { get; set; }        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

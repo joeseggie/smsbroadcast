@@ -11,9 +11,10 @@ using System;
 namespace SmsBroadcast.Infrastructure.Migrations
 {
     [DbContext(typeof(SmsBroadcastContext))]
-    partial class SmsBroadcastContextModelSnapshot : ModelSnapshot
+    [Migration("20171031135659_RemoveUniqueScheduleCode")]
+    partial class RemoveUniqueScheduleCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

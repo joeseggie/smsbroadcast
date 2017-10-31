@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SmsBroadcast.Infrastructure\SmsBroadcast.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmsBroadcast.Services\SmsBroadcast.Services.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmsBroadcast.Infrastructure.Data;
+using SmsBroadcast.Services;
 
 namespace SmsBroadcast.Web
 {
@@ -31,7 +32,7 @@ namespace SmsBroadcast.Web
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddDbContext<SmsBroadcastContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            
+            services.AddTransient<ISmsBroadcast, SmsBroadcastService>();
             services.AddMvc();
         }
 

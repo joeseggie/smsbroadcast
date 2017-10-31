@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmsBroadcast.Infrastructure.Entities
 {
-    [Table("RunOnceBroadcast")]
-    public class RunOnceBroadcast
+    [Table("Schedule")]
+    public class Schedule
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -37,6 +37,11 @@ namespace SmsBroadcast.Infrastructure.Entities
         public string Description { get; set; }
 
         [Required]
+        [MaxLength(10)]
+        [Column(TypeName="varchar(10)")]
+        public string Code { get; set; }
+
+        [Required]
         [MaxLength(9)]
         [Column(TypeName="varchar(9)")]
         public string CreatedBy { get; set; }
@@ -45,6 +50,10 @@ namespace SmsBroadcast.Infrastructure.Entities
         [MaxLength(10)]
         [Column(TypeName="char(10)")]
         public string Status { get; set; }
+
+        [Required]
+        [Column(TypeName="datetimeoffset")]
+        public DateTimeOffset ScheduleDateTime { get; set; }
 
         [Required]
         [Timestamp]

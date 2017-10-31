@@ -11,8 +11,8 @@ using System;
 namespace SmsBroadcast.Infrastructure.Migrations
 {
     [DbContext(typeof(SmsBroadcastContext))]
-    [Migration("20171031110251_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20171031135439_ScheduleCode")]
+    partial class ScheduleCode
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,61 +21,16 @@ namespace SmsBroadcast.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("SmsBroadcast.Infrastructure.Entities.RunOnceBroadcast", b =>
+            modelBuilder.Entity("SmsBroadcast.Infrastructure.Entities.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CreatedBy")
+                    b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("varchar(9)")
-                        .HasMaxLength(9);
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("varchar(500)")
-                        .HasMaxLength(500);
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("varchar(160)")
-                        .HasMaxLength(160);
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("char(10)")
+                        .HasColumnType("varchar(10)")
                         .HasMaxLength(10);
 
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("To")
-                        .IsRequired()
-                        .HasColumnType("varchar(9)")
-                        .HasMaxLength(9);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RunOnceBroadcasts");
-                });
-
-            modelBuilder.Entity("SmsBroadcast.Infrastructure.Entities.ScheduledBroadcast", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("varchar(9)")
@@ -101,7 +56,7 @@ namespace SmsBroadcast.Infrastructure.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.Property<DateTimeOffset>("Schedule")
+                    b.Property<DateTimeOffset>("ScheduleDateTime")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Status")
@@ -121,7 +76,10 @@ namespace SmsBroadcast.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ScScheduledBroadcasts");
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Schedule");
                 });
 #pragma warning restore 612, 618
         }
