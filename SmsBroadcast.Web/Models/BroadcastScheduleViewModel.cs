@@ -34,7 +34,7 @@ namespace SmsBroadcast.Web.Models
         public string Repeat { get; set; }
 
         [Display(Name="Every")]
-        public int Frequency { get; set; }
+        public int Frequency { get; set; } = 1;
 
         public string Description { get; set; }
     }
