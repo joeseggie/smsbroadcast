@@ -7,12 +7,12 @@ namespace SmsBroadcast.Services
 {
     public interface ISmsBroadcast
     {
-         Task<OperationResult> BroadcastOnce(string[] recipients, Schedule broadcastSchedule);
-         Task<OperationResult> ScheduleBroadcast(string[] recipients, Schedule broadcastSchedule, DateTimeOffset broadcastDate);
-         Task<OperationResult> DailyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
-         Task<OperationResult> WeeklyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
-         Task<OperationResult> MonthlyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
-         Task<OperationResult> YearlyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
-         Task<OperationResult> CancelBroadcast(string code);
+         Task<OperationResult> BroadcastOnceAsync(string[] recipients, Schedule broadcastSchedule);
+         Task<OperationResult> ScheduleBroadcastAsync(string[] recipients, Schedule broadcastSchedule, DateTimeOffset broadcastDate);
+         Task<OperationResult> DailyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
+         Task<OperationResult> WeeklyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
+         Task<OperationResult> MonthlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
+         Task<OperationResult> YearlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate);
+         Task<OperationResult> CancelBroadcastAsync(string code);
     }
 }

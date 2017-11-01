@@ -24,7 +24,7 @@ namespace SmsBroadcast.Services
         /// <param name="recepients">List of recepients.</param>
         /// <param name="broadcastSchedule">Broadcast schedule details.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> BroadcastOnce(string[] recipients, Schedule broadcastSchedule)
+        public async Task<OperationResult> BroadcastOnceAsync(string[] recipients, Schedule broadcastSchedule)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace SmsBroadcast.Services
         /// </summary>
         /// <param name="code">Code of the broadcast schedule.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> CancelBroadcast(string code)
+        public async Task<OperationResult> CancelBroadcastAsync(string code)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> DailyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> DailyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
         {
             int frequencyCounter = 0;
             try
@@ -130,7 +130,7 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> MonthlyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> MonthlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
         {
             int frequencyCounter = 0;
             try
@@ -173,7 +173,7 @@ namespace SmsBroadcast.Services
         /// <param name="broadcastSchedule">Broadcast schedule details.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> ScheduleBroadcast(string[] recipients, Schedule broadcastSchedule, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> ScheduleBroadcastAsync(string[] recipients, Schedule broadcastSchedule, DateTimeOffset broadcastDate)
         {
             try
             {
@@ -210,7 +210,7 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> WeeklyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> WeeklyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
         {
             int frequencyCounter = 0;
             try
@@ -254,7 +254,7 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> YearlyBroadcast(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> YearlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
         {
             int frequencyCounter = 0;
             try
