@@ -11,6 +11,28 @@
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "minify",
+            "command": "gulp",
+            "isShellCommand": true,
+            "args": [],
+            "isBuildCommand": true,
+            "showOutput": "always",
+            "options": {
+                "cwd": "${workspaceRoot}/Subscribers.Web"
+            }
+        },
+        {
+            "taskName": "clean",
+            "command": "gulp",
+            "isShellCommand": true,
+            "args": [],
+            "isBuildCommand": true,
+            "showOutput": "always",
+            "options": {
+                "cwd": "${workspaceRoot}/Subscribers.Web"
+            }
         }
     ]
 }
