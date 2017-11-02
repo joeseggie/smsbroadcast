@@ -8,7 +8,12 @@
     <div class="panel-heading">
         <p class="lead">Broadcast Details</p>
     </div>
-    <div>&nbsp;</div>
+    <div>
+        &nbsp;
+        @if(message != null){ 
+            <p class="alert alert-info">@message</p>
+        }
+    </div>
     <form class="form-horizontal" asp-action="index" role="form" method="POST">
         <div class="form-group">
             <label asp-for="From" class="control-label col-xs-2"></label>
@@ -41,19 +46,29 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="Description" class="control-label col-xs-2"></label>
+            <div class="col-xs-6">
+                <textarea id="Description" name="Description" rows="2" cols="50" class="form-control" placeholder="Brief description about the broadcast"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-xs-offset-2 col-xs-6">
                 <label asp-for="RunOnce" class="radio-inline col-xs-4">
-                    <input asp-for="RunOnce" value="RunOnce" type="radio" name="ScheduleRadio" checked="checked">Run Once
+                    <input asp-for="RunOnce" value=true type="radio" id="RunOnce" checked="checked">Run Once
                 </label>
-                <label asp-for="Schedule" class="radio-inline col-xs-4">
-                    <input asp-for="Schedule" value="Schedule" type="radio" name="ScheduleRadio">Schedule
+                <label asp-for="RunOnce" class="radio-inline col-xs-4">
+                    <input asp-for="RunOnce" value=false type="radio" id="Schedule">Schedule
                 </label>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2" asp-for="ScheduleDate"></label>
-            <div class="col-xs-6">
-                <input asp-for="ScheduleDate" class="form-control" placeholder="Schedule date YYYY-MM-DD" disabled />
+            <div class="col-xs-2">
+                <input asp-for="ScheduleDate" class="form-control" placeholder="YYYY-MM-DD HH:MM" disabled />
+            </div>
+            <label class="control-label col-xs-1" asp-for="RepeatEndDate"></label>
+            <div class="col-xs-2">
+                <input asp-for="RepeatEndDate" class="form-control" placeholder="YYYY-MM-DD HH:MM" disabled />
             </div>
         </div>
         <div class="form-group">
@@ -68,7 +83,7 @@
             </div>
             <label class="control-label col-xs-1" asp-for="Frequency"></label>
             <div class="col-xs-1">
-                <input type="text" asp-for="Frequency" class="form-control" disabled />
+                <input type="text" asp-for="Frequency" value="1" class="form-control" disabled />
             </div>
         </div>
         <div class="form-group">
@@ -88,17 +103,22 @@
                 $('#Repeat').removeAttr('disabled');
                 $('#ScheduleDate').removeAttr('disabled');
                 $('#Frequency').removeAttr('disabled');
+                $('#RepeatEndDate').removeAttr('disabled');
             });
 
             $('#RunOnce').click(function(){
                 $('#Repeat').prop('disabled', 'disabled');
                 $('#ScheduleDate').prop('disabled', 'disabled');
                 $('#Frequency').prop('disabled', 'disabled');
+                $('#RepeatEndDate').prop('disabled', 'disabled');
             });
 
             $('#ScheduleDate').datetimepicker({
-                timepicker : false,
-                format: 'Y-m-d'
+                format: 'Y-m-d H:i'
+            });
+
+            $('#RepeatEndDate').datetimepicker({
+                format: 'Y-m-d H:i'
             });
         });        
     </script>

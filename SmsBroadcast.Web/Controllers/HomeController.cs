@@ -37,8 +37,7 @@ namespace SmsBroadcast.Web.Controllers
                 {
                     operationResult = await ScheduleRunOnceBroadcastAsync(model);
                 }
-
-                if(model.Schedule)
+                else
                 {
                     operationResult = await ScheduleBroadcastAsync(model);
                 }
@@ -91,7 +90,7 @@ namespace SmsBroadcast.Web.Controllers
                 Code = model.Code,
                 CreatedBy = User.Identity.Name.Substring(4),
                 Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate);
+            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
         }
 
         private async Task<OperationResult> ScheduleMonthlyBroadcastAsync(BroadcastScheduleViewModel model)
@@ -104,7 +103,7 @@ namespace SmsBroadcast.Web.Controllers
                 Code = model.Code,
                 CreatedBy = User.Identity.Name.Substring(4),
                 Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate);
+            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
         }
 
         private async Task<OperationResult> ScheduleWeeklyBroadcastAsync(BroadcastScheduleViewModel model)
@@ -117,20 +116,37 @@ namespace SmsBroadcast.Web.Controllers
                 Code = model.Code,
                 CreatedBy = User.Identity.Name.Substring(4),
                 Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate);
+            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
         }
 
         private async Task<OperationResult> ScheduleDailyBroadcastAsync(BroadcastScheduleViewModel model)
         {
-            return await _smsBroadcastService.DailyBroadcastAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate);
+            if(model.ScheduleDate == model.RepeatEndDate && model.Frequency == 1)
+            {
+                return await _smsBroadcastService.ScheduleBroadcastAsync(model.To.Split(new char[] { ',', ' ' }), new Schedule
+                {
+                    From = model.From,
+                    Subject = model.Subject,
+                    Message = model.Message,
+                    Description = model.Description,
+                    Code = model.Code,
+                    CreatedBy = User.Identity.Name.Substring(4),
+                    Status = "PENDING"
+                }, model.ScheduleDate);
+            }
+            else
+            {
+                return await _smsBroadcastService.DailyBroadcastAsync(model.To.Split(new char[] { ',', ' ' }), new Schedule
+                {
+                    From = model.From,
+                    Subject = model.Subject,
+                    Message = model.Message,
+                    Description = model.Description,
+                    Code = model.Code,
+                    CreatedBy = User.Identity.Name.Substring(4),
+                    Status = "PENDING"
+                }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
+            }
         }
 
         private async Task<OperationResult> ScheduleRunOnceBroadcastAsync(BroadcastScheduleViewModel model)

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using SmsBroadcast.Infrastructure;
 using SmsBroadcast.Infrastructure.Data;
 using SmsBroadcast.Infrastructure.Entities;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmsBroadcast.Services
 {
@@ -28,25 +30,32 @@ namespace SmsBroadcast.Services
         {
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-
-                foreach (var recipient in recipients)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using (var command = _db.Database.GetDbConnection().CreateCommand())
                 {
-                    if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                    foreach (var recipient in recipients)
                     {
-                        var scheduleToAdd = new Schedule();
-                        scheduleToAdd = broadcastSchedule;
-                        scheduleToAdd.ScheduleDateTime = DateTimeOffset.Now;
-                        scheduleToAdd.To = recipient;
+                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                        {
 
-                        schedules.Add(scheduleToAdd);
+                            broadcastSchedule.ScheduleDateTime = DateTimeOffset.Now;
+                            broadcastSchedule.To = recipient;
+
+                            queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                        }
                     }
+
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
@@ -86,35 +95,43 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> DailyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> DailyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate, DateTimeOffset repeatEndDate)
         {
-            int frequencyCounter = 0;
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-
-                while (frequencyCounter < frequency)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using(var command = _db.Database.GetDbConnection().CreateCommand())
                 {
                     foreach (var recipient in recipients)
                     {
-                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
-                        {
-                            var scheduleToAdd = new Schedule();
-                            scheduleToAdd = broadcastSchedule;
-                            scheduleToAdd.ScheduleDateTime = broadcastDate.AddDays((double)frequencyCounter);
-                            scheduleToAdd.To = recipient;
+                        int frequencyCounter = 0;
+                        var scheduleDateTime = broadcastDate.AddDays(frequencyCounter);
 
-                            schedules.Add(scheduleToAdd);
+                        while (repeatEndDate > scheduleDateTime)
+                        {
+                            if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                            {
+                                broadcastSchedule.ScheduleDateTime = scheduleDateTime;
+                                broadcastSchedule.To = recipient;
+
+                                queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                            }
+                            frequencyCounter += 1;
+                            scheduleDateTime = broadcastDate.AddDays(frequencyCounter);
                         }
                     }
 
-                    frequencyCounter += 1;
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
@@ -130,35 +147,43 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> MonthlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> MonthlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate, DateTimeOffset repeatEndDate)
         {
-            int frequencyCounter = 0;
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-
-                while (frequencyCounter < frequency)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using (var command = _db.Database.GetDbConnection().CreateCommand())
                 {
                     foreach (var recipient in recipients)
                     {
-                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
-                        {
-                            var scheduleToAdd = new Schedule();
-                            scheduleToAdd = broadcastSchedule;
-                            scheduleToAdd.ScheduleDateTime = broadcastDate.AddMonths(frequencyCounter);
-                            scheduleToAdd.To = recipient;
+                        int frequencyCounter = 0;
+                        var scheduleDateTime = broadcastDate.AddMonths(frequencyCounter);
 
-                            schedules.Add(scheduleToAdd);
+                        while (repeatEndDate > scheduleDateTime)
+                        {
+                            if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                            {
+                                broadcastSchedule.ScheduleDateTime = scheduleDateTime;
+                                broadcastSchedule.To = recipient;
+
+                                queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                            }
+                            frequencyCounter += 1;
+                            scheduleDateTime = broadcastDate.AddDays(frequencyCounter);
                         }
                     }
 
-                    frequencyCounter += 1;
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
@@ -177,24 +202,31 @@ namespace SmsBroadcast.Services
         {
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-                foreach (var recipient in recipients)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using (var command = _db.Database.GetDbConnection().CreateCommand())
                 {
-                    if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                    foreach (var recipient in recipients)
                     {
-                        var scheduleToAdd = new Schedule();
-                        scheduleToAdd = broadcastSchedule;
-                        scheduleToAdd.ScheduleDateTime = broadcastDate;
-                        scheduleToAdd.To = recipient;
+                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                        {
+                            broadcastSchedule.ScheduleDateTime = broadcastDate;
+                            broadcastSchedule.To = recipient;
 
-                        schedules.Add(scheduleToAdd);
+                            queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                        }
                     }
+
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
@@ -210,35 +242,43 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> WeeklyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> WeeklyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate, DateTimeOffset repeatEndDate)
         {
-            int frequencyCounter = 0;
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-
-                while (frequencyCounter < frequency)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using (var command = _db.Database.GetDbConnection().CreateCommand())
                 {
                     foreach (var recipient in recipients)
                     {
-                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
-                        {
-                            var scheduleToAdd = new Schedule();
-                            scheduleToAdd = broadcastSchedule;
-                            scheduleToAdd.ScheduleDateTime = broadcastDate.AddDays(frequencyCounter * 7.0);
-                            scheduleToAdd.To = recipient;
+                        int frequencyCounter = 0;
+                        var scheduleDateTime = broadcastDate.AddDays(frequencyCounter * 7);
 
-                            schedules.Add(scheduleToAdd);
+                        while (repeatEndDate > scheduleDateTime)
+                        {
+                            if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                            {
+                                broadcastSchedule.ScheduleDateTime = scheduleDateTime;
+                                broadcastSchedule.To = recipient;
+
+                                queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                            }
+                            frequencyCounter += 1;
+                            scheduleDateTime = broadcastDate.AddDays(frequencyCounter);
                         }
                     }
 
-                    frequencyCounter += 1;
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
@@ -254,35 +294,43 @@ namespace SmsBroadcast.Services
         /// <param name="frequency">Frequency of the schedule occurence.</param>
         /// <param name="broadcastDate">Broadcast start date and time.</param>
         /// <returns>Boolean value indicating whether the operation was a success or not.</returns>
-        public async Task<OperationResult> YearlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate)
+        public async Task<OperationResult> YearlyBroadcastAsync(string[] recipients, Schedule broadcastSchedule, int frequency, DateTimeOffset broadcastDate, DateTimeOffset repeatEndDate)
         {
-            int frequencyCounter = 0;
             try
             {
-                List<Schedule> schedules = new List<Schedule>();
-
-                while (frequencyCounter < frequency)
+                var queryBuilder = new StringBuilder();
+                queryBuilder.Append($"INSERT INTO Schedule ([Id], [CreatedBy], [Description], [From], [Message], [Status], [Subject], [Code], [ScheduleDateTime], [To]) VALUES ");
+                using (_db)
+                using (var command = _db.Database.GetDbConnection().CreateCommand())
                 {
                     foreach (var recipient in recipients)
                     {
-                        if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
-                        {
-                            var scheduleToAdd = new Schedule();
-                            scheduleToAdd = broadcastSchedule;
-                            scheduleToAdd.ScheduleDateTime = broadcastDate.AddYears(frequencyCounter);
-                            scheduleToAdd.To = recipient;
+                        int frequencyCounter = 0;
+                        var scheduleDateTime = broadcastDate.AddYears(frequencyCounter);
 
-                            schedules.Add(scheduleToAdd);
+                        while (repeatEndDate > scheduleDateTime)
+                        {
+                            if (Regex.IsMatch(recipient, "^71[0-9]{7}$"))
+                            {
+                                broadcastSchedule.ScheduleDateTime = scheduleDateTime;
+                                broadcastSchedule.To = recipient;
+
+                                queryBuilder.Append($"('{Guid.NewGuid()}', '{broadcastSchedule.CreatedBy}', '{broadcastSchedule.Description}', '{broadcastSchedule.From}', '{broadcastSchedule.Message}', '{broadcastSchedule.Status}', '{broadcastSchedule.Subject}', '{broadcastSchedule.Code}', '{broadcastSchedule.ScheduleDateTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{broadcastSchedule.To}'),");
+                            }
+                            frequencyCounter += 1;
+                            scheduleDateTime = broadcastDate.AddDays(frequencyCounter);
                         }
                     }
 
-                    frequencyCounter += 1;
+                    queryBuilder.Length--; // Remove the last character (,) from the query string builder.
+                    command.CommandText = $"{queryBuilder.ToString()};"; // Add the statement termination character (;)
+
+                    await _db.Database.OpenConnectionAsync();
+                    await command.ExecuteNonQueryAsync();
+                    _db.Database.CloseConnection();
+
+                    return new OperationResult { Success = true, Message = $"SUCCESS - {recipients.Count()} recipients to receive broadcast." };
                 }
-
-                await _db.Schedules.AddRangeAsync(schedules);
-                await _db.SaveChangesAsync();
-
-                return new OperationResult{ Success = true, Message = $"SUCCESS - {schedules.Count} recipients to receive broadcast." };
             }
             catch (Exception error)
             {
