@@ -9,6 +9,9 @@ using SmsBroadcast.Core.Entities;
 using SmsBroadcast.Core.Services;
 using SmsBroadcast.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using SmsBroadcast.Core.Common;
 
 namespace SmsBroadcast.Web.Controllers
 {
@@ -29,139 +32,69 @@ namespace SmsBroadcast.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(BroadcastScheduleViewModel model)
+        public async Task<IActionResult> Index(BroadcastScheduleViewModel model, IFormFile csvUploadFile)
         {
-            var operationResult = new OperationResult();
-
-            if (ModelState.IsValid)
+            if (csvUploadFile == null)
             {
-                if(model.RunOnce)
-                {
-                    operationResult = await ScheduleRunOnceBroadcastAsync(model);
-                }
-                else
-                {
-                    operationResult = await ScheduleBroadcastAsync(model);
-                }
-
-                TempData["Message"] = operationResult.Message;
-
-                return RedirectToAction("index");
-            }
-
-            return View(model);
-        }
-
-        private async Task<OperationResult> ScheduleBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            switch (model.Repeat.ToLower())
-            {
-                case "daily":
-                    return await ScheduleDailyBroadcastAsync(model);
-                case "weekly":
-                    return await ScheduleWeeklyBroadcastAsync(model);
-                case "monthly":
-                    return await ScheduleMonthlyBroadcastAsync(model);
-                case "yearly":
-                    return await ScheduleYearlyBroadcastAsync(model);
-                default:
-                    return await ScheduleOnceBroadcastAsync(model);
-            }
-        }
-
-        private async Task<OperationResult> ScheduleOnceBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            return await _smsBroadcastService.ScheduleBroadcastAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            }, model.ScheduleDate);
-        }
-
-        private async Task<OperationResult> ScheduleYearlyBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            return await _smsBroadcastService.YearlyBroadcastAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
-        }
-
-        private async Task<OperationResult> ScheduleMonthlyBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            return await _smsBroadcastService.MonthlyBroadcastAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
-        }
-
-        private async Task<OperationResult> ScheduleWeeklyBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            return await _smsBroadcastService.WeeklyBroadcastAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
-        }
-
-        private async Task<OperationResult> ScheduleDailyBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            if(model.ScheduleDate == model.RepeatEndDate && model.Frequency == 1)
-            {
-                return await _smsBroadcastService.ScheduleBroadcastAsync(model.To.Split(new char[] { ',', ' ' }), new Schedule
-                {
-                    From = model.From,
-                    Subject = model.Subject,
-                    Message = model.Message,
-                    Description = model.Description,
-                    Code = model.Code,
-                    CreatedBy = User.Identity.Name.Substring(4),
-                    Status = "PENDING"
-                }, model.ScheduleDate);
+                ModelState.AddModelError(string.Empty, "CSV file with numbers to send broadcast is required.");
+                return View(model);
             }
             else
             {
-                return await _smsBroadcastService.DailyBroadcastAsync(model.To.Split(new char[] { ',', ' ' }), new Schedule
+                var csvFileUploadPath = Path.GetTempFileName();
+                if (csvUploadFile.Length > 0)
                 {
-                    From = model.From,
-                    Subject = model.Subject,
-                    Message = model.Message,
-                    Description = model.Description,
-                    Code = model.Code,
-                    CreatedBy = User.Identity.Name.Substring(4),
-                    Status = "PENDING"
-                }, model.Frequency, model.ScheduleDate, model.RepeatEndDate);
-            }
-        }
+                    if (ModelState.IsValid)
+                    {
+                        using (var stream = new FileStream(csvFileUploadPath, FileMode.Create))
+                        {
+                            await csvUploadFile.CopyToAsync(stream);
+                        }
 
-        private async Task<OperationResult> ScheduleRunOnceBroadcastAsync(BroadcastScheduleViewModel model)
-        {
-            return await _smsBroadcastService.BroadcastOnceAsync(model.To.Split(new char[]{',',' '}), new Schedule{
-                From = model.From,
-                Subject = model.Subject,
-                Message = model.Message,
-                Description = model.Description,
-                Code = model.Code,
-                CreatedBy = User.Identity.Name.Substring(4),
-                Status = "PENDING"
-            });
+                        var csvData = await System.IO.File.ReadAllTextAsync(csvFileUploadPath);
+                        var recipients = new List<string>();
+
+                        foreach (var record in csvData.Split("\r\n").Skip(1))
+                        {
+                            if (!string.IsNullOrWhiteSpace(record))
+                            {
+                                recipients.Add(record);
+                            }
+                        }
+
+                        if (model.RunOnce)
+                        {
+                            await _smsBroadcastService.ProcessBroadcastAsync(
+                                new Broadcast
+                                {
+                                    Code = model.Code,
+                                    CreatedBy = User.Identity.Name,
+                                    Description = model.Description,
+                                    From = model.From,
+                                    Message = model.Message,
+                                    RepeatEndDate = model.RepeatEndDate,
+                                    ScheduleDateTime = model.ScheduleDate,
+                                    Status = "PENDING",
+                                    Subject = model.Subject
+                                },
+                                recipients.ToArray());
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+
+                        TempData["Message"] = "Broadcast messages submitted for queueing";
+
+                        return RedirectToAction("index");
+                    }
+
+                    return View(model);
+                }
+
+                ModelState.AddModelError(string.Empty, "CSV file with numbers to send broadcast is required.");
+                return View(model);
+            }
         }
 
         public IActionResult Error()

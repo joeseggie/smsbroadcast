@@ -1,4 +1,4 @@
-namespace SmsBroadcast.Core
+namespace SmsBroadcast.Core.Common
 {
     public class OperationResult
     {
