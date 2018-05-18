@@ -4,13 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SmsBroadcast.Infrastructure;
-using SmsBroadcast.Infrastructure.Entities;
-using SmsBroadcast.Services;
+using SmsBroadcast.Core;
+using SmsBroadcast.Core.Entities;
+using SmsBroadcast.Core.Services;
 using SmsBroadcast.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmsBroadcast.Web.Controllers
 {
+    [Authorize(Roles ="ACL-SmsBroadcast, ACL-Developers")]
     public class HomeController : Controller
     {
         private readonly ISmsBroadcast _smsBroadcastService;

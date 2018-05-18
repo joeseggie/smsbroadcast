@@ -264,6 +264,8 @@ __pycache__/
 appsettings.Development.json
 appsettings.Production.json
 appsettings.Staging.json
+SmsBroadcast.TaskRunner/appsettings.json
+SmsBroadcast.TaskRunner/bin/Debug/appsettings.json
 
 SmsBroadcast.Web/bin/*
 SmsBroadcast.Web/obj/*
@@ -277,6 +279,8 @@ SmsBroadcast.Api/bin/*
 SmsBroadcast.Api/obj/*
 SmsBroadcast.Android/bin/*
 SmsBroadcast.Android/obj/*
+SmsBroadcast.TaskRunner/bin/*
+SmsBroadcast.TaskRunner/obj/*
 
 SmsBroadcast.Web/bin/
 SmsBroadcast.Web/obj/
@@ -290,6 +294,8 @@ SmsBroadcast.Api/bin/
 SmsBroadcast.Api/obj/
 SmsBroadcast.Android/bin/
 SmsBroadcast.Android/obj/
+SmsBroadcast.TaskRunner/bin/
+SmsBroadcast.TaskRunner/obj/
 
 .vscode/*
 !.vscode/settings.json

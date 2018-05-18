@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmsBroadcast.Infrastructure\SmsBroadcast.Infrastructure.csproj" />
-    <ProjectReference Include="..\SmsBroadcast.Services\SmsBroadcast.Services.csproj" />
+    <ProjectReference Include="..\SmsBroadcast.Core\SmsBroadcast.Core.csproj" />
   </ItemGroup>
 
 </Project>
