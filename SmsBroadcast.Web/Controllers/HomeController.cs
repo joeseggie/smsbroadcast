@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using SmsBroadcast.Core.Common;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SmsBroadcast.Web.Controllers
 {
@@ -51,16 +53,7 @@ namespace SmsBroadcast.Web.Controllers
                             await csvUploadFile.CopyToAsync(stream);
                         }
 
-                        var csvData = await System.IO.File.ReadAllTextAsync(csvFileUploadPath);
-                        var recipients = new List<string>();
-
-                        foreach (var record in csvData.Split("\r\n").Skip(1))
-                        {
-                            if (!string.IsNullOrWhiteSpace(record))
-                            {
-                                recipients.Add(record);
-                            }
-                        }
+                        List<string> recipients = await GetRecipients(csvFileUploadPath);
 
                         if (model.RunOnce)
                         {
@@ -68,12 +61,12 @@ namespace SmsBroadcast.Web.Controllers
                                 new Broadcast
                                 {
                                     Code = model.Code,
-                                    CreatedBy = User.Identity.Name,
+                                    CreatedBy = User.Identity.Name.Substring(4),
                                     Description = model.Description,
                                     From = model.From,
                                     Message = model.Message,
-                                    RepeatEndDate = model.RepeatEndDate,
-                                    ScheduleDateTime = model.ScheduleDate,
+                                    RepeatEndDate = null,
+                                    ScheduleDateTime = DateTimeOffset.UtcNow,
                                     Status = "PENDING",
                                     Subject = model.Subject
                                 },
@@ -95,6 +88,34 @@ namespace SmsBroadcast.Web.Controllers
                 ModelState.AddModelError(string.Empty, "CSV file with numbers to send broadcast is required.");
                 return View(model);
             }
+        }
+
+        private static async Task<List<string>> GetRecipients(string csvFileUploadPath)
+        {
+            var csvDataBuilder = new StringBuilder();
+            csvDataBuilder.Clear();
+
+            using (StreamReader reader = new StreamReader(csvFileUploadPath, encoding: Encoding.UTF8))
+            {
+                while (!reader.EndOfStream)
+                {
+                    csvDataBuilder.Append($"{await reader.ReadLineAsync()},");
+                }
+            }
+
+            var recipients = new List<string>();
+            var csvData = (csvDataBuilder.ToString()).Split(',').Skip(1);
+            var msisdnValidator = new Regex("^71[0-9]{7}$");
+
+            foreach (var record in csvData)
+            {
+                if (!string.IsNullOrWhiteSpace(record) && msisdnValidator.IsMatch(record))
+                {
+                    recipients.Add(record);
+                }
+            }
+
+            return recipients;
         }
 
         public IActionResult Error()

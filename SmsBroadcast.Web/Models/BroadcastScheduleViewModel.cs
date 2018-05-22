@@ -10,9 +10,6 @@ namespace SmsBroadcast.Web.Models
         public string From { get; set; }
 
         [Required]
-        public string To { get; set; }
-
-        [Required]
         [MaxLength(100)]
         public string Subject { get; set; }
 

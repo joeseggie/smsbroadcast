@@ -21,6 +21,6 @@ namespace SmsBroadcast.Core.Common
         public string Status { get; set; }
 
         public DateTimeOffset ScheduleDateTime { get; set; }
-        public DateTimeOffset RepeatEndDate { get; set; }
+        public DateTimeOffset? RepeatEndDate { get; set; }
     }
 }
