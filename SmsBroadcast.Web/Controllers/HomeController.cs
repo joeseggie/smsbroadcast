@@ -74,7 +74,42 @@ namespace SmsBroadcast.Web.Controllers
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            var broadcastRepeat = ScheduleRepeat.None;
+                            switch (model.Repeat.ToUpper())
+                            {
+                                case "DAILY":
+                                    broadcastRepeat = ScheduleRepeat.Daily;
+                                    break;
+                                case "WEEKLY":
+                                    broadcastRepeat = ScheduleRepeat.Weekly;
+                                    break;
+                                case "MONTHLY":
+                                    broadcastRepeat = ScheduleRepeat.Monthly;
+                                    break;
+                                case "YEARLY":
+                                    broadcastRepeat = ScheduleRepeat.Yearly;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            await _smsBroadcastService.ProcessBroadcastAsync(
+                                new Broadcast
+                                {
+                                    Code = model.Code,
+                                    CreatedBy = User.Identity.Name.Substring(4),
+                                    Description = model.Description,
+                                    From = model.From,
+                                    Message = model.Message,
+                                    RepeatEndDate = model.RepeatEndDate.ToUniversalTime(),
+                                    ScheduleDateTime = model.ScheduleDate.ToUniversalTime(),
+                                    Status = "PENDING",
+                                    Subject = model.Subject
+                                },
+                                recipients.ToArray(),
+                                runOnce: false,
+                                repeat: broadcastRepeat,
+                                frequency: model.Frequency);
                         }
 
                         TempData["Message"] = "Broadcast messages submitted for queueing";

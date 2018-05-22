@@ -107,7 +107,7 @@ namespace SmsBroadcast.Core.Services
                                     }
                                 }
 
-                                broadcastDate.AddDays(frequency);
+                                broadcastDate = broadcastDate.AddDays(frequency);
                             }
                         }
                         break;
