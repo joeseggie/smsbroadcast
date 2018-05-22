@@ -140,7 +140,7 @@ namespace SmsBroadcast.Core.Services
                                     }
                                 }
 
-                                broadcastDate.AddDays(frequency * 7);
+                                broadcastDate = broadcastDate.AddDays(frequency * 7);
                             }
                         }
                         break;
@@ -173,7 +173,7 @@ namespace SmsBroadcast.Core.Services
                                     }
                                 }
 
-                                broadcastDate.AddDays(frequency * 30);
+                                broadcastDate = broadcastDate.AddDays(frequency * 30);
                             }
                         }
                         break;
@@ -206,7 +206,7 @@ namespace SmsBroadcast.Core.Services
                                     }
                                 }
 
-                                broadcastDate.AddDays(frequency * 365);
+                                broadcastDate = broadcastDate.AddDays(frequency * 365);
                             }
                         }
                         break;
